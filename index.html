@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>7th Hour HQ - Mobile Map</title>
+    <title>7th Hour HQ - Temporal Map</title>
     <style>
         * {
             margin: 0;
@@ -15,509 +16,647 @@
             user-select: none;
         }
 
-        body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #000000 0%, #0a0a1a 50%, #0f1628 100%);
-            color: #00bfff;
-            overflow: hidden;
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-        }
+```
+    body {
+        font-family: 'Courier New', monospace;
+        background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0d1b2a 100%);
+        color: #00d4ff;
+        overflow: hidden;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+    }
 
-        .mobile-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+    .mobile-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
 
-        .header {
-            background: rgba(0, 0, 0, 0.95);
-            padding: 12px 15px 8px 15px;
-            border-bottom: 1px solid #00bfff;
-            text-align: center;
-            flex-shrink: 0;
-        }
+    .header {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 27, 42, 0.9) 100%);
+        padding: 12px 15px 8px 15px;
+        border-bottom: 2px solid #00d4ff;
+        text-align: center;
+        flex-shrink: 0;
+        box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+    }
 
-        .header h1 {
-            font-size: 16px;
-            text-shadow: 0 0 8px #00bfff;
-            animation: glow 2s ease-in-out infinite alternate;
-            margin-bottom: 2px;
-        }
+    .header h1 {
+        font-size: 16px;
+        text-shadow: 0 0 15px #00d4ff;
+        animation: temporalGlow 3s ease-in-out infinite alternate;
+        margin-bottom: 2px;
+        color: #87ceeb;
+        letter-spacing: 1px;
+    }
 
-        .header .status {
-            font-size: 9px;
-            color: #ff6b35;
-            opacity: 0.8;
-        }
+    .header .status {
+        font-size: 9px;
+        color: #4169e1;
+        opacity: 0.9;
+        text-shadow: 0 0 8px rgba(65, 105, 225, 0.5);
+    }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 8px #00bfff; }
-            to { text-shadow: 0 0 15px #00bfff, 0 0 25px #00bfff; }
+    @keyframes temporalGlow {
+        0% { 
+            text-shadow: 0 0 15px #00d4ff, 0 0 25px rgba(0, 212, 255, 0.5);
         }
-
-        .level-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid #00bfff;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            flex-shrink: 0;
+        50% { 
+            text-shadow: 0 0 25px #87ceeb, 0 0 35px rgba(135, 206, 235, 0.7);
         }
-
-        .level-tabs::-webkit-scrollbar {
-            display: none;
+        100% { 
+            text-shadow: 0 0 20px #4169e1, 0 0 30px rgba(65, 105, 225, 0.6);
         }
+    }
 
-        .level-tab {
-            min-width: 80px;
-            padding: 10px 8px;
-            background: rgba(0, 191, 255, 0.1);
-            border-right: 1px solid rgba(0, 191, 255, 0.3);
-            color: #00bfff;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-size: 10px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
+    .level-tabs {
+        display: flex;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(13, 27, 42, 0.85) 100%);
+        border-bottom: 1px solid rgba(0, 212, 255, 0.4);
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        flex-shrink: 0;
+    }
 
-        .level-tab.active {
-            background: rgba(0, 191, 255, 0.3);
-            box-shadow: inset 0 2px 0 #00bfff;
-        }
+    .level-tabs::-webkit-scrollbar {
+        display: none;
+    }
 
-        .facility-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
+    .level-tab {
+        min-width: 80px;
+        padding: 10px 8px;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(65, 105, 225, 0.05) 100%);
+        border-right: 1px solid rgba(0, 212, 255, 0.2);
+        color: #00d4ff;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-align: center;
+        font-size: 10px;
+        font-weight: bold;
+        white-space: nowrap;
+        text-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+    }
 
-        .level {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.4s ease;
-            padding: 15px 10px 80px 10px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #00bfff transparent;
-        }
+    .level-tab.active {
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(65, 105, 225, 0.15) 100%);
+        box-shadow: 
+            inset 0 3px 0 #00d4ff,
+            0 0 15px rgba(0, 212, 255, 0.3);
+        color: #87ceeb;
+        text-shadow: 0 0 10px rgba(135, 206, 235, 0.6);
+    }
 
-        .level::-webkit-scrollbar {
-            width: 3px;
-        }
+    .facility-area {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .level::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    .level {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.5s ease;
+        padding: 15px 10px 80px 10px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 212, 255, 0.5) transparent;
+    }
 
-        .level::-webkit-scrollbar-thumb {
-            background: #00bfff;
-            border-radius: 2px;
-        }
+    .level::-webkit-scrollbar {
+        width: 3px;
+    }
 
-        .level.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    .level::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-        .level.prev {
-            transform: translateX(-100%);
-        }
+    .level::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #00d4ff, #4169e1);
+        border-radius: 2px;
+    }
 
-        .rooms-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            min-height: 100%;
-        }
+    .level.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
 
-        .room {
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.12) 0%, 
-                rgba(0, 191, 255, 0.04) 100%);
-            border: 1px solid rgba(0, 191, 255, 0.6);
-            border-radius: 12px;
-            padding: 12px 8px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 85px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
+    .level.prev {
+        transform: translateX(-100%);
+    }
+
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        min-height: 100%;
+    }
+
+    .room {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.88) 0%, 
+            rgba(13, 27, 42, 0.75) 50%,
+            rgba(0, 0, 0, 0.85) 100%);
+        border: 1.5px solid rgba(0, 212, 255, 0.6);
+        border-radius: 15px;
+        padding: 12px 8px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 85px;
+        overflow: hidden;
+        backdrop-filter: blur(15px);
+        box-shadow: 
+            0 8px 25px rgba(0, 0, 0, 0.4),
+            0 2px 8px rgba(0, 212, 255, 0.1),
+            inset 0 1px 0 rgba(0, 212, 255, 0.2);
+    }
+
+    .room:active {
+        transform: scale(0.95);
+    }
+
+    .room.tapped {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.92) 0%, 
+            rgba(13, 27, 42, 0.85) 50%,
+            rgba(0, 0, 0, 0.9) 100%);
+        transform: scale(1.02);
+        box-shadow: 
+            0 0 30px rgba(0, 212, 255, 0.5),
+            0 8px 25px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(0, 212, 255, 0.4);
+    }
+
+    .room-title {
+        font-weight: bold;
+        font-size: 11px;
+        margin-bottom: 4px;
+        color: #00d4ff;
+        line-height: 1.1;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.7);
+        letter-spacing: 0.4px;
+    }
+
+    .room-desc {
+        font-size: 8px;
+        color: rgba(135, 206, 235, 0.9);
+        line-height: 1.2;
+        text-shadow: 0 0 6px rgba(135, 206, 235, 0.4);
+    }
+
+    .room-status {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #00d4ff 0%, #4169e1 100%);
+        box-shadow: 
+            0 0 12px #00d4ff,
+            0 0 20px rgba(0, 212, 255, 0.6);
+        animation: temporalPulse 2s infinite;
+    }
+
+    @keyframes temporalPulse {
+        0%, 100% { 
+            opacity: 1; 
+            transform: scale(1);
             box-shadow: 
-                0 4px 15px rgba(0, 191, 255, 0.1),
-                inset 0 1px 0 rgba(0, 191, 255, 0.2);
+                0 0 12px #00d4ff,
+                0 0 20px rgba(0, 212, 255, 0.6);
         }
-
-        .room::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, 
-                transparent 40%, 
-                rgba(0, 191, 255, 0.08) 50%, 
-                transparent 60%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .room:active {
-            transform: scale(0.95);
-        }
-
-        .room.tapped {
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.25) 0%, 
-                rgba(0, 191, 255, 0.15) 100%);
-            transform: scale(1.02);
+        50% { 
+            opacity: 0.7;
+            transform: scale(1.3);
             box-shadow: 
-                0 0 25px rgba(0, 191, 255, 0.4),
-                0 4px 15px rgba(0, 191, 255, 0.2),
-                inset 0 1px 0 rgba(0, 191, 255, 0.4);
+                0 0 20px #87ceeb,
+                0 0 30px rgba(135, 206, 235, 0.8);
         }
+    }
 
-        .room.tapped::before {
-            opacity: 1;
-        }
+    /* High security rooms */
+    .room.high-security {
+        border: 2px solid rgba(65, 105, 225, 0.8);
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.92) 0%, 
+            rgba(13, 27, 42, 0.85) 50%,
+            rgba(26, 26, 62, 0.75) 100%);
+    }
 
-        .room-title {
-            font-weight: bold;
-            font-size: 11px;
-            margin-bottom: 4px;
-            color: #00bfff;
-            line-height: 1.1;
-            text-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
-            letter-spacing: 0.3px;
-        }
+    .room.high-security .room-title {
+        color: #4169e1;
+        text-shadow: 0 0 12px rgba(65, 105, 225, 0.8);
+    }
 
-        .room-desc {
-            font-size: 8px;
-            color: rgba(135, 206, 250, 0.9);
-            line-height: 1.2;
-            text-shadow: 0 0 4px rgba(135, 206, 250, 0.3);
-        }
+    .room.high-security .room-status {
+        background: radial-gradient(circle, #4169e1 0%, #6495ed 100%);
+        box-shadow: 
+            0 0 15px #4169e1,
+            0 0 25px rgba(65, 105, 225, 0.7);
+    }
 
-        .room-status {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #00bfff;
+    /* Special room styling - light blue for individual access */
+    .room.special {
+        border: 2px solid rgba(135, 206, 235, 0.8);
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.9) 0%, 
+            rgba(13, 27, 42, 0.8) 50%,
+            rgba(135, 206, 235, 0.1) 100%);
+    }
+
+    .room.special .room-title {
+        color: #87ceeb;
+        text-shadow: 0 0 12px rgba(135, 206, 235, 0.8);
+    }
+
+    .room.special .room-status {
+        background: radial-gradient(circle, #87ceeb 0%, #00d4ff 100%);
+        box-shadow: 
+            0 0 15px #87ceeb,
+            0 0 25px rgba(135, 206, 235, 0.7);
+    }
+
+    /* Large rooms take full width */
+    .room.large {
+        grid-column: 1 / -1;
+        min-height: 65px;
+    }
+
+    .info-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.97) 0%, 
+            rgba(13, 27, 42, 0.95) 50%,
+            rgba(26, 26, 62, 0.93) 100%);
+        backdrop-filter: blur(25px);
+        z-index: 1000;
+        transform: translateY(100%);
+        transition: transform 0.5s ease;
+        display: flex;
+        flex-direction: column;
+        border-top: 3px solid #00d4ff;
+    }
+
+    .info-overlay.active {
+        transform: translateY(0);
+    }
+
+    .info-header {
+        padding: 18px 15px;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    .info-title {
+        color: #00d4ff;
+        font-size: 15px;
+        font-weight: bold;
+        text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+        letter-spacing: 0.6px;
+    }
+
+    .close-btn {
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.15) 0%, 
+            rgba(65, 105, 225, 0.1) 100%);
+        border: 1.5px solid rgba(0, 212, 255, 0.6);
+        color: #00d4ff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 11px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
+        letter-spacing: 0.4px;
+        transition: all 0.4s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .close-btn:active {
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.3) 0%, 
+            rgba(65, 105, 225, 0.2) 100%);
+        transform: scale(0.95);
+    }
+
+    .info-content {
+        flex: 1;
+        padding: 20px 15px;
+        overflow-y: auto;
+    }
+
+    .info-description {
+        color: rgba(135, 206, 235, 0.95);
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .info-specs {
+        border-top: 1px solid rgba(0, 212, 255, 0.25);
+        padding-top: 20px;
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.03) 0%, 
+            transparent 100%);
+        border-radius: 10px;
+        margin-top: 15px;
+        padding: 20px 15px;
+    }
+
+    .spec-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0;
+        font-size: 11px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+    }
+
+    .spec-label {
+        color: #00d4ff;
+        font-weight: bold;
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    }
+
+    .spec-value {
+        color: rgba(135, 206, 235, 0.9);
+        text-align: right;
+        max-width: 50%;
+    }
+
+    .help-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.2) 0%, 
+            rgba(65, 105, 225, 0.15) 100%);
+        border: 2px solid #00d4ff;
+        color: #00d4ff;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: helpGlow 3s infinite;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+    }
+
+    @keyframes helpGlow {
+        0%, 100% { 
             box-shadow: 
-                0 0 8px #00bfff,
-                0 0 12px rgba(0, 191, 255, 0.5);
-            animation: statusPulse 2s infinite;
+                0 0 20px rgba(0, 212, 255, 0.4),
+                0 4px 15px rgba(0, 0, 0, 0.3);
         }
-
-        @keyframes statusPulse {
-            0%, 100% { 
-                opacity: 1; 
-                box-shadow: 
-                    0 0 8px #00bfff,
-                    0 0 12px rgba(0, 191, 255, 0.5);
-            }
-            50% { 
-                opacity: 0.6; 
-                box-shadow: 
-                    0 0 4px #00bfff,
-                    0 0 8px rgba(0, 191, 255, 0.3);
-            }
-        }
-
-        /* High security rooms get subtle distinguishing features */
-        .room.high-security {
-            border: 1px solid rgba(0, 191, 255, 0.8);
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.18) 0%, 
-                rgba(0, 191, 255, 0.08) 100%);
-        }
-
-        .room.high-security .room-title {
-            color: #4fc3f7;
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.6);
-        }
-
-        .room.high-security .room-status {
-            background: #4fc3f7;
+        50% { 
             box-shadow: 
-                0 0 10px #4fc3f7,
-                0 0 15px rgba(79, 195, 247, 0.6);
-            animation: secureStatusPulse 1.5s infinite;
+                0 0 30px rgba(0, 212, 255, 0.6),
+                0 6px 20px rgba(0, 0, 0, 0.4);
         }
+    }
 
-        @keyframes secureStatusPulse {
-            0%, 100% { 
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% { 
-                opacity: 0.7;
-                transform: scale(1.2);
-            }
+    .help-btn:active {
+        transform: scale(0.95);
+    }
+
+    .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: radial-gradient(circle, #00d4ff 0%, #4169e1 100%);
+        border-radius: 50%;
+        animation: temporalFloat 12s linear infinite;
+        box-shadow: 0 0 6px rgba(0, 212, 255, 0.6);
+    }
+
+    @keyframes temporalFloat {
+        0% { 
+            transform: translateY(100vh) translateX(0) rotate(0deg); 
+            opacity: 0; 
         }
-
-        /* Special room styling */
-        .room.special {
-            border: 1px solid rgba(0, 191, 255, 0.7);
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.15) 0%, 
-                rgba(0, 191, 255, 0.08) 100%);
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { 
+            transform: translateY(-100px) translateX(100px) rotate(360deg); 
+            opacity: 0; 
         }
+    }
 
-        .room.special .room-title {
-            color: #00e5ff;
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
-        }
+    /* Help modal styling */
+    .help-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.97) 0%, 
+            rgba(13, 27, 42, 0.95) 50%,
+            rgba(26, 26, 62, 0.93) 100%);
+        backdrop-filter: blur(25px);
+        z-index: 2000;
+        transform: scale(0) rotate(180deg);
+        transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        display: flex;
+        flex-direction: column;
+        border: 3px solid #00d4ff;
+        border-radius: 20px;
+        margin: 20px;
+        box-shadow: 
+            0 0 50px rgba(0, 212, 255, 0.5),
+            inset 0 2px 0 rgba(0, 212, 255, 0.3);
+    }
 
-        .info-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, 
-                rgba(0, 0, 0, 0.97) 0%, 
-                rgba(10, 10, 26, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            border-top: 2px solid #00bfff;
-            box-shadow: 
-                0 -10px 30px rgba(0, 191, 255, 0.1),
-                inset 0 1px 0 rgba(0, 191, 255, 0.2);
-        }
+    .help-modal.active {
+        transform: scale(1) rotate(0deg);
+    }
 
-        .info-overlay.active {
-            transform: translateY(0);
-        }
+    .help-header {
+        padding: 20px;
+        border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        text-align: center;
+        background: linear-gradient(90deg, 
+            rgba(0, 212, 255, 0.1) 0%, 
+            transparent 50%,
+            rgba(0, 212, 255, 0.1) 100%);
+    }
 
-        .info-header {
-            padding: 15px;
-            border-bottom: 1px solid rgba(0, 191, 255, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-            background: linear-gradient(90deg, 
-                rgba(0, 191, 255, 0.05) 0%, 
-                transparent 100%);
-        }
+    .help-title {
+        color: #00d4ff;
+        font-size: 18px;
+        font-weight: bold;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
 
-        .info-title {
-            color: #00bfff;
-            font-size: 14px;
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
-            letter-spacing: 0.5px;
-        }
+    .help-subtitle {
+        color: rgba(135, 206, 235, 0.9);
+        font-size: 12px;
+    }
 
-        .close-btn {
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.1) 0%, 
-                rgba(0, 191, 255, 0.05) 100%);
-            border: 1px solid rgba(0, 191, 255, 0.5);
-            color: #00bfff;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 10px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            letter-spacing: 0.3px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 8px rgba(0, 191, 255, 0.1);
-        }
+    .help-content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
 
-        .close-btn:active {
-            background: rgba(0, 191, 255, 0.2);
-            transform: scale(0.95);
-            box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
-        }
+    .legend-section {
+        margin-bottom: 25px;
+    }
 
-        .info-content {
-            flex: 1;
-            padding: 20px 15px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0, 191, 255, 0.5) transparent;
-        }
+    .legend-section h3 {
+        color: #00d4ff;
+        font-size: 14px;
+        margin-bottom: 15px;
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    }
 
-        .info-content::-webkit-scrollbar {
-            width: 4px;
-        }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+        padding: 10px;
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 8px;
+        border-left: 3px solid;
+    }
 
-        .info-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    .legend-item.standard { border-left-color: #00d4ff; }
+    .legend-item.high-security { border-left-color: #4169e1; }
+    .legend-item.special { border-left-color: #87ceeb; }
 
-        .info-content::-webkit-scrollbar-thumb {
-            background: rgba(0, 191, 255, 0.5);
-            border-radius: 2px;
-        }
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 12px;
+        flex-shrink: 0;
+        border: 2px solid;
+    }
 
-        .info-description {
-            color: rgba(135, 206, 250, 0.95);
-            font-size: 12px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            text-shadow: 0 0 4px rgba(135, 206, 250, 0.2);
-        }
+    .legend-color.standard {
+        background: radial-gradient(circle, #00d4ff 0%, #4169e1 100%);
+        border-color: #00d4ff;
+    }
 
-        .info-specs {
-            border-top: 1px solid rgba(0, 191, 255, 0.2);
-            padding-top: 15px;
-            background: linear-gradient(135deg, 
-                rgba(0, 191, 255, 0.02) 0%, 
-                transparent 100%);
-            border-radius: 8px;
-            margin-top: 10px;
-            padding: 15px;
-        }
+    .legend-color.high-security {
+        background: radial-gradient(circle, #4169e1 0%, #6495ed 100%);
+        border-color: #4169e1;
+    }
 
-        .spec-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 10px 0;
-            font-size: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
-            transition: all 0.2s ease;
-        }
+    .legend-color.special {
+        background: radial-gradient(circle, #87ceeb 0%, #00d4ff 100%);
+        border-color: #87ceeb;
+    }
 
-        .spec-item:hover {
-            background: rgba(0, 191, 255, 0.05);
-            margin: 10px -10px;
-            padding: 8px 10px;
-            border-radius: 4px;
-        }
+    .legend-text {
+        flex: 1;
+    }
 
-        .spec-label {
-            color: #00bfff;
-            font-weight: bold;
-            text-shadow: 0 0 6px rgba(0, 191, 255, 0.4);
-            letter-spacing: 0.3px;
-        }
+    .legend-label {
+        color: #00d4ff;
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
 
-        .spec-value {
-            color: rgba(135, 206, 250, 0.9);
-            text-align: right;
-            max-width: 50%;
-            text-shadow: 0 0 4px rgba(135, 206, 250, 0.2);
-        }
+    .legend-desc {
+        color: rgba(135, 206, 235, 0.9);
+        font-size: 10px;
+        line-height: 1.3;
+    }
 
-        .emergency-btn {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: rgba(255, 0, 0, 0.2);
-            border: 2px solid #ff0000;
-            color: #ff0000;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 8px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: emergencyBlink 1.5s infinite;
-            z-index: 100;
-        }
+    .features-list {
+        list-style: none;
+        padding: 0;
+    }
 
-        @keyframes emergencyBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.6; }
-        }
+    .features-list li {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px;
+        background: rgba(0, 212, 255, 0.03);
+        border-radius: 6px;
+        font-size: 11px;
+        color: rgba(135, 206, 235, 0.9);
+    }
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 1;
-        }
+    .features-list li::before {
+        content: "→";
+        color: #00d4ff;
+        font-weight: bold;
+        margin-right: 10px;
+        font-size: 14px;
+    }
 
-        .particle {
-            position: absolute;
-            width: 1.5px;
-            height: 1.5px;
-            background: #00bfff;
-            border-radius: 50%;
-            animation: float 8s linear infinite;
-        }
+    .help-close {
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.2) 0%, 
+            rgba(65, 105, 225, 0.15) 100%);
+        border: 2px solid #00d4ff;
+        color: #00d4ff;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        margin: 20px auto;
+        display: block;
+        transition: all 0.3s ease;
+        text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+    }
 
-        @keyframes float {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-50px) translateX(50px); opacity: 0; }
-        }
+    .help-close:active {
+        transform: scale(0.95);
+        background: linear-gradient(135deg, 
+            rgba(0, 212, 255, 0.3) 0%, 
+            rgba(65, 105, 225, 0.2) 100%);
+    }
+</style>
+```
 
-        /* Haptic feedback simulation */
-        .room:active,
-        .level-tab:active,
-        .close-btn:active,
-        .emergency-btn:active {
-            transition: transform 0.1s ease;
-        }
-
-        /* Special room layouts for different levels */
-        .command-grid { grid-template-columns: repeat(2, 1fr); }
-        .ops-grid { grid-template-columns: repeat(2, 1fr); }
-        .residential-grid { grid-template-columns: repeat(2, 1fr); }
-        .tech-grid { grid-template-columns: 1fr; }
-        .medical-grid { grid-template-columns: repeat(2, 1fr); }
-        .storage-grid { grid-template-columns: repeat(2, 1fr); }
-        .security-grid { grid-template-columns: 1fr; }
-
-        /* Large rooms take full width */
-        .room.large {
-            grid-column: 1 / -1;
-            min-height: 60px;
-        }
-
-        /* Animation for level transitions */
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideInLeft {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .level.slide-right { animation: slideInRight 0.4s ease; }
-        .level.slide-left { animation: slideInLeft 0.4s ease; }
-    </style>
 </head>
 <body>
     <div class="mobile-container">
@@ -526,618 +665,602 @@
             <div class="status">TEMPORAL FOLD • SECURITY: ULTRA • OPERATIONAL</div>
         </div>
 
-        <div class="level-tabs" id="levelTabs">
-            <div class="level-tab active" data-level="0">COMMAND</div>
-            <div class="level-tab" data-level="1">OPS</div>
-            <div class="level-tab" data-level="2">QUARTERS</div>
-            <div class="level-tab" data-level="3">TECH</div>
-            <div class="level-tab" data-level="4">MEDICAL</div>
-            <div class="level-tab" data-level="5">STORAGE</div>
-            <div class="level-tab" data-level="6">SECURITY</div>
-        </div>
-
-        <div class="facility-area">
-            <!-- Command Level -->
-            <div class="level active" id="level-0">
-                <div class="rooms-grid command-grid">
-                    <div class="room high-security" data-room="neural-command">
-                        <div class="room-status"></div>
-                        <div class="room-title">NEURAL COMMAND</div>
-                        <div class="room-desc">Tactical displays • Timeline monitoring</div>
-                    </div>
-                    <div class="room high-security" data-room="quantum-archives">
-                        <div class="room-status"></div>
-                        <div class="room-title">QUANTUM ARCHIVES</div>
-                        <div class="room-desc">Original timeline records</div>
-                    </div>
-                    <div class="room" data-room="briefing">
-                        <div class="room-status"></div>
-                        <div class="room-title">BRIEFING ROOM</div>
-                        <div class="room-desc">Mission planning • Team coordination</div>
-                    </div>
-                    <div class="room high-security" data-room="director-office">
-                        <div class="room-status"></div>
-                        <div class="room-title">DIRECTOR'S OFFICE</div>
-                        <div class="room-desc">High-level decisions • Classified ops</div>
-                    </div>
-                    <div class="room large special" data-room="situation">
-                        <div class="room-status"></div>
-                        <div class="room-title">SITUATION ROOM</div>
-                        <div class="room-desc">Real-time CHRONOS tracking • Threat assessment • Strategic planning</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Operations Level -->
-            <div class="level" id="level-1">
-                <div class="rooms-grid ops-grid">
-                    <div class="room" data-room="training">
-                        <div class="room-status"></div>
-                        <div class="room-title">TRAINING</div>
-                        <div class="room-desc">Ability development • Combat simulation</div>
-                    </div>
-                    <div class="room high-security" data-room="portal-lab">
-                        <div class="room-status"></div>
-                        <div class="room-title">PORTAL LAB</div>
-                        <div class="room-desc">Travel spot calibration</div>
-                    </div>
-                    <div class="room" data-room="surveillance">
-                        <div class="room-status"></div>
-                        <div class="room-title">SURVEILLANCE</div>
-                        <div class="room-desc">CHRONOS monitoring • Counter-intel</div>
-                    </div>
-                    <div class="room" data-room="armory">
-                        <div class="room-status"></div>
-                        <div class="room-title">ARMORY</div>
-                        <div class="room-desc">Temporal weapons • Emergency gear</div>
-                    </div>
-                    <div class="room" data-room="mission-prep">
-                        <div class="room-status"></div>
-                        <div class="room-title">MISSION PREP</div>
-                        <div class="room-desc">Equipment checkout • Cover setup</div>
-                    </div>
-                    <div class="room" data-room="intel">
-                        <div class="room-status"></div>
-                        <div class="room-title">INTEL CENTER</div>
-                        <div class="room-desc">Data analysis • Pattern recognition</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Residential Level -->
-            <div class="level" id="level-2">
-                <div class="rooms-grid residential-grid">
-                    <div class="room" data-room="yoongi-quarters">
-                        <div class="room-status"></div>
-                        <div class="room-title">YOONGI'S QUARTERS</div>
-                        <div class="room-desc">Time Anchor sanctuary • Timeline journals</div>
-                    </div>
-                    <div class="room" data-room="yn-quarters">
-                        <div class="room-status"></div>
-                        <div class="room-title">Y/N'S QUARTERS</div>
-                        <div class="room-desc">Reality Shifter space • Memory recovery</div>
-                    </div>
-                    <div class="room large special" data-room="lounge">
-                        <div class="room-status"></div>
-                        <div class="room-title">COMMON LOUNGE</div>
-                        <div class="room-desc">Black leather sofas • Recreation area • Team bonding space</div>
-                    </div>
-                    <div class="room special" data-room="cafeteria">
-                        <div class="room-status"></div>
-                        <div class="room-title">CAFETERIA</div>
-                        <div class="room-desc">Meal prep • Social hub • Informal meetings</div>
-                    </div>
-                    <div class="room" data-room="guest-quarters">
-                        <div class="room-status"></div>
-                        <div class="room-title">GUEST QUARTERS</div>
-                        <div class="room-desc">New recruit housing • Safe haven</div>
-                    </div>
-                    <div class="room" data-room="library">
-                        <div class="room-status"></div>
-                        <div class="room-title">LIBRARY</div>
-                        <div class="room-desc">Pre-CHRONOS history • Research materials</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tech Level -->
-            <div class="level" id="level-3">
-                <div class="rooms-grid tech-grid">
-                    <div class="room classified large" data-room="quantum-core">
-                        <div class="room-status"></div>
-                        <div class="room-title">QUANTUM CORE</div>
-                        <div class="room-desc">Facility power source • Temporal boundary energy • Reality stabilization systems</div>
-                    </div>
-                    <div class="room restricted large" data-room="development-lab">
-                        <div class="room-status"></div>
-                        <div class="room-title">Y/N & YOONGI'S LAB</div>
-                        <div class="room-desc">Joint development workshop • Portal technology • Temporal masking systems</div>
-                    </div>
-                    <div class="room large" data-room="server-room">
-                        <div class="room-status"></div>
-                        <div class="room-title">SERVER FARM</div>
-                        <div class="room-desc">Quantum computing • Data encryption • AI systems • Network infrastructure</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Medical Level -->
-            <div class="level" id="level-4">
-                <div class="rooms-grid medical-grid">
-                    <div class="room" data-room="medical-bay">
-                        <div class="room-status"></div>
-                        <div class="room-title">MEDICAL BAY</div>
-                        <div class="room-desc">Temporal treatment • Emergency care</div>
-                    </div>
-                    <div class="room restricted" data-room="memory-therapy">
-                        <div class="room-status"></div>
-                        <div class="room-title">MEMORY THERAPY</div>
-                        <div class="room-desc">Timeline displacement treatment</div>
-                    </div>
-                    <div class="room" data-room="isolation">
-                        <div class="room-status"></div>
-                        <div class="room-title">ISOLATION PODS</div>
-                        <div class="room-desc">Temporal stabilization • Recovery chambers</div>
-                    </div>
-                    <div class="room" data-room="research-med">
-                        <div class="room-status"></div>
-                        <div class="room-title">MEDICAL RESEARCH</div>
-                        <div class="room-desc">Outlier biology • Treatment development</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Storage Level -->
-            <div class="level" id="level-5">
-                <div class="rooms-grid storage-grid">
-                    <div class="room" data-room="supply-general">
-                        <div class="room-status"></div>
-                        <div class="room-title">GENERAL SUPPLIES</div>
-                        <div class="room-desc">Daily necessities • Food storage</div>
-                    </div>
-                    <div class="room classified" data-room="temporal-vault">
-                        <div class="room-status"></div>
-                        <div class="room-title">TEMPORAL VAULT</div>
-                        <div class="room-desc">Timeline artifacts • Protected memories</div>
-                    </div>
-                    <div class="room restricted" data-room="weapons-cache">
-                        <div class="room-status"></div>
-                        <div class="room-title">WEAPONS CACHE</div>
-                        <div class="room-desc">Temporal weapons • Emergency arsenal</div>
-                    </div>
-                    <div class="room" data-room="equipment-storage">
-                        <div class="room-status"></div>
-                        <div class="room-title">EQUIPMENT STORAGE</div>
-                        <div class="room-desc">Technical components • Spare parts</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security Level -->
-            <div class="level" id="level-6">
-                <div class="rooms-grid security-grid">
-                    <div class="room classified large" data-room="security-central">
-                        <div class="room-status"></div>
-                        <div class="room-title">SECURITY COMMAND</div>
-                        <div class="room-desc">Facility monitoring • Threat detection • Access control • Reality anchor network</div>
-                    </div>
-                    <div class="room restricted large" data-room="reality-anchors">
-                        <div class="room-status"></div>
-                        <div class="room-title">REALITY ANCHOR CORE</div>
-                        <div class="room-desc">Facility stabilization • Temporal field generators • Defense grid control</div>
-                    </div>
-                    <div class="room classified large" data-room="portal-control">
-                        <div class="room-status"></div>
-                        <div class="room-title">PORTAL CONTROL</div>
-                        <div class="room-desc">Travel spot network • Emergency extraction • Access management • Quantum tunnel monitoring</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="info-overlay" id="infoOverlay">
-            <div class="info-header">
-                <div class="info-title" id="infoTitle">FACILITY INFO</div>
-                <button class="close-btn" onclick="closeInfo()">CLOSE</button>
-            </div>
-            <div class="info-content">
-                <div class="info-description" id="infoDescription">
-                    Select a room to view detailed information.
-                </div>
-                <div class="info-specs" id="infoSpecs"></div>
-            </div>
-        </div>
-
-        <button class="emergency-btn" onclick="emergencyProtocol()">
-            EMRG<br>LOCK
-        </button>
-
-        <div class="particles" id="particles"></div>
+```
+    <div class="level-tabs" id="levelTabs">
+        <div class="level-tab active" data-level="0">COMMAND</div>
+        <div class="level-tab" data-level="1">OPS</div>
+        <div class="level-tab" data-level="2">QUARTERS</div>
+        <div class="level-tab" data-level="3">TECH</div>
+        <div class="level-tab" data-level="4">MEDICAL</div>
+        <div class="level-tab" data-level="5">STORAGE</div>
+        <div class="level-tab" data-level="6">SECURITY</div>
     </div>
 
-    <script>
-        const roomData = {
-            'neural-command': {
-                title: 'NEURAL COMMAND CENTER',
-                description: 'The beating heart of the 7th Hour resistance. Multiple neural-linked tactical displays show real-time CHRONOS activities across all TMZs. Advanced quantum computing systems process timeline data and strategic intelligence.',
-                specs: {
-                    'Security Level': 'ULTRA CLASSIFIED',
-                    'Capacity': '12 operators',
-                    'Power Usage': '2.7MW continuous',
-                    'Quantum Cores': '7 active units',
-                    'Neural Links': '24 tactical displays',
-                    'Uptime': '99.97%'
-                }
-            },
-            'quantum-archives': {
-                title: 'QUANTUM ARCHIVES',
-                description: 'Secure repository containing complete records of the original 25-hour timeline and documentation of all CHRONOS alterations. Protected by quantum encryption and temporal isolation fields.',
-                specs: {
-                    'Security Level': 'RESTRICTED ACCESS',
-                    'Storage': '847 petabytes',
-                    'Timeline Records': '742 complete sets',
-                    'Backup Systems': 'Triple redundancy',
-                    'Access Control': 'Biometric + temporal',
-                    'Last Backup': '00:23:17 ago'
-                }
-            },
-            'lounge': {
-                title: 'COMMON LOUNGE',
-                description: 'Central gathering space featuring the famous black leather sectional sofa and entertainment systems. This is where team members decompress, share meals, and build the bonds that keep them fighting against CHRONOS.',
-                specs: {
-                    'Capacity': '20 people',
-                    'Furniture': 'Black leather sectional',
-                    'Entertainment': 'Quantum holoscreen',
-                    'Climate Control': 'Auto-regulated',
-                    'Security Level': 'Standard access',
-                    'Daily Usage': '94% occupied'
-                }
-            },
-            'development-lab': {
-                title: 'Y/N & YOONGI DEVELOPMENT LAB',
-                description: 'The secret workshop where Y/N and Yoongi jointly developed portal technology and temporal masking systems. Their combined spatial and temporal abilities created breakthroughs impossible for either alone.',
-                specs: {
-                    'Security': 'RESTRICTED - Dual Access',
-                    'Portal Prototypes': '73 iterations',
-                    'Success Rate': '96.7%',
-                    'Energy Efficiency': '340% improved',
-                    'Collaboration Hours': '2,847 logged',
-                    'Active Projects': '17 ongoing'
-                }
-            },
-            'yoongi-quarters': {
-                title: 'TIME ANCHOR QUARTERS',
-                description: 'Yoongi\'s private sanctuary, containing his timeline journals and personal effects from multiple resets. The walls are lined with analog clocks, each frozen at 1:59.',
-                specs: {
-                    'Privacy Level': 'Personal access only',
-                    'Timeline Journals': '17 volumes',
-                    'Analog Clocks': '25 units (all at 1:59)',
-                    'Temperature': '25°C constant',
-                    'Temporal Shielding': 'Level 7',
-                    'Memory Capacity': 'Unlimited'
-                }
-            },
-            'yn-quarters': {
-                title: 'REALITY SHIFTER QUARTERS',
-                description: 'Y/N\'s personal space designed for memory recovery and reality grounding. Features specialized equipment to help process timeline memories and develop spatial manipulation abilities.',
-                specs: {
-                    'Privacy Level': 'Personal access only',
-                    'Memory Aids': 'Neural enhancement tech',
-                    'Reality Anchors': '4 personal units',
-                    'Spatial Trainers': 'Advanced systems',
-                    'Recovery Rate': '87% improvement',
-                    'Awakening Speed': '23% faster/reset'
-                }
+    <div class="facility-area">
+        <!-- Command Level -->
+        <div class="level active" id="level-0">
+            <div class="rooms-grid">
+                <div class="room high-security" data-room="neural-command">
+                    <div class="room-status"></div>
+                    <div class="room-title">NEURAL COMMAND</div>
+                    <div class="room-desc">Tactical displays • Timeline monitoring</div>
+                </div>
+                <div class="room high-security" data-room="quantum-archives">
+                    <div class="room-status"></div>
+                    <div class="room-title">QUANTUM ARCHIVES</div>
+                    <div class="room-desc">Original timeline records</div>
+                </div>
+                <div class="room" data-room="briefing">
+                    <div class="room-status"></div>
+                    <div class="room-title">BRIEFING ROOM</div>
+                    <div class="room-desc">Mission planning • Team coordination</div>
+                </div>
+                <div class="room high-security" data-room="director-office">
+                    <div class="room-status"></div>
+                    <div class="room-title">DIRECTOR'S OFFICE</div>
+                    <div class="room-desc">High-level decisions • Classified ops</div>
+                </div>
+                <div class="room large special" data-room="lounge">
+                    <div class="room-status"></div>
+                    <div class="room-title">COMMON LOUNGE</div>
+                    <div class="room-desc">Black leather sofas • Recreation area • Team bonding</div>
+                </div>
+                <div class="room special" data-room="cafeteria">
+                    <div class="room-status"></div>
+                    <div class="room-title">CAFETERIA</div>
+                    <div class="room-desc">Meal prep • Social hub</div>
+                </div>
+                <div class="room" data-room="library">
+                    <div class="room-status"></div>
+                    <div class="room-title">LIBRARY</div>
+                    <div class="room-desc">Pre-CHRONOS history • Research materials</div>
+                </div>
+                <div class="room large special" data-room="situation">
+                    <div class="room-status"></div>
+                    <div class="room-title">SITUATION ROOM</div>
+                    <div class="room-desc">Real-time CHRONOS tracking • Threat assessment</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operations Level -->
+        <div class="level" id="level-1">
+            <div class="rooms-grid">
+                <div class="room" data-room="training">
+                    <div class="room-status"></div>
+                    <div class="room-title">TRAINING</div>
+                    <div class="room-desc">Ability development • Combat simulation</div>
+                </div>
+                <div class="room high-security" data-room="portal-lab">
+                    <div class="room-status"></div>
+                    <div class="room-title">PORTAL LAB</div>
+                    <div class="room-desc">Travel spot calibration</div>
+                </div>
+                <div class="room" data-room="surveillance">
+                    <div class="room-status"></div>
+                    <div class="room-title">SURVEILLANCE</div>
+                    <div class="room-desc">CHRONOS monitoring • Counter-intel</div>
+                </div>
+                <div class="room" data-room="armory">
+                    <div class="room-status"></div>
+                    <div class="room-title">ARMORY</div>
+                    <div class="room-desc">Temporal weapons • Emergency gear</div>
+                </div>
+                <div class="room" data-room="mission-prep">
+                    <div class="room-status"></div>
+                    <div class="room-title">MISSION PREP</div>
+                    <div class="room-desc">Equipment checkout • Cover setup</div>
+                </div>
+                <div class="room" data-room="intel">
+                    <div class="room-status"></div>
+                    <div class="room-title">INTEL CENTER</div>
+                    <div class="room-desc">Data analysis • Pattern recognition</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Residential Level -->
+        <div class="level" id="level-2">
+            <div class="rooms-grid">
+                <div class="room special" data-room="yoongi-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">YOONGI'S QUARTERS</div>
+                    <div class="room-desc">Time Anchor sanctuary • Timeline journals</div>
+                </div>
+                <div class="room special" data-room="yn-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">Y/N'S QUARTERS</div>
+                    <div class="room-desc">Reality Shifter space • Memory recovery</div>
+                </div>
+                <div class="room special" data-room="namjoon-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">NAMJOON'S QUARTERS</div>
+                    <div class="room-desc">Strategic planning • Timeline calculations</div>
+                </div>
+                <div class="room special" data-room="seokjin-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">SEOKJIN'S QUARTERS</div>
+                    <div class="room-desc">Memory preservation • Archive access</div>
+                </div>
+                <div class="room special" data-room="hoseok-jimin-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">HOSEOK & JIMIN'S QUARTERS</div>
+                    <div class="room-desc">Shared space • Network planning</div>
+                </div>
+                <div class="room special" data-room="taehyung-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">TAEHYUNG'S QUARTERS</div>
+                    <div class="room-desc">Former enforcer space • Recovery</div>
+                </div>
+                <div class="room special" data-room="jungkook-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">JUNGKOOK'S QUARTERS</div>
+                    <div class="room-desc">Mimicry training • Adaptation center</div>
+                </div>
+                <div class="room" data-room="guest-quarters">
+                    <div class="room-status"></div>
+                    <div class="room-title">GUEST QUARTERS</div>
+                    <div class="room-desc">New recruit housing • Safe haven</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Level -->
+        <div class="level" id="level-3">
+            <div class="rooms-grid">
+                <div class="room high-security large" data-room="quantum-core">
+                    <div class="room-status"></div>
+                    <div class="room-title">QUANTUM CORE</div>
+                    <div class="room-desc">Facility power source • Temporal boundary energy</div>
+                </div>
+                <div class="room special large" data-room="development-lab">
+                    <div class="room-status"></div>
+                    <div class="room-title">Y/N & YOONGI'S LAB</div>
+                    <div class="room-desc">Joint development workshop • Portal technology</div>
+                </div>
+                <div class="room large" data-room="server-room">
+                    <div class="room-status"></div>
+                    <div class="room-title">SERVER FARM</div>
+                    <div class="room-desc">Quantum computing • Data encryption • AI systems</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Level -->
+        <div class="level" id="level-4">
+            <div class="rooms-grid">
+                <div class="room" data-room="medical-bay">
+                    <div class="room-status"></div>
+                    <div class="room-title">MEDICAL BAY</div>
+                    <div class="room-desc">Temporal treatment • Emergency care</div>
+                </div>
+                <div class="room high-security" data-room="memory-therapy">
+                    <div class="room-status"></div>
+                    <div class="room-title">MEMORY THERAPY</div>
+                    <div class="room-desc">Timeline displacement treatment</div>
+                </div>
+                <div class="room" data-room="isolation">
+                    <div class="room-status"></div>
+                    <div class="room-title">ISOLATION PODS</div>
+                    <div class="room-desc">Temporal stabilization • Recovery chambers</div>
+                </div>
+                <div class="room" data-room="research-med">
+                    <div class="room-status"></div>
+                    <div class="room-title">MEDICAL RESEARCH</div>
+                    <div class="room-desc">Outlier biology • Treatment development</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storage Level -->
+        <div class="level" id="level-5">
+            <div class="rooms-grid">
+                <div class="room" data-room="supply-general">
+                    <div class="room-status"></div>
+                    <div class="room-title">GENERAL SUPPLIES</div>
+                    <div class="room-desc">Daily necessities • Food storage</div>
+                </div>
+                <div class="room high-security" data-room="temporal-vault">
+                    <div class="room-status"></div>
+                    <div class="room-title">TEMPORAL VAULT</div>
+                    <div class="room-desc">Timeline artifacts • Protected memories</div>
+                </div>
+                <div class="room high-security" data-room="weapons-cache">
+                    <div class="room-status"></div>
+                    <div class="room-title">WEAPONS CACHE</div>
+                    <div class="room-desc">Temporal weapons • Emergency arsenal</div>
+                </div>
+                <div class="room" data-room="equipment-storage">
+                    <div class="room-status"></div>
+                    <div class="room-title">EQUIPMENT STORAGE</div>
+                    <div class="room-desc">Technical components • Spare parts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Level -->
+        <div class="level" id="level-6">
+            <div class="rooms-grid">
+                <div class="room high-security large" data-room="security-central">
+                    <div class="room-status"></div>
+                    <div class="room-title">SECURITY COMMAND</div>
+                    <div class="room-desc">Facility monitoring • Threat detection • Access control</div>
+                </div>
+                <div class="room high-security large" data-room="reality-anchors">
+                    <div class="room-status"></div>
+                    <div class="room-title">REALITY ANCHOR CORE</div>
+                    <div class="room-desc">Facility stabilization • Temporal field generators</div>
+                </div>
+                <div class="room high-security large" data-room="portal-control">
+                    <div class="room-status"></div>
+                    <div class="room-title">PORTAL CONTROL</div>
+                    <div class="room-desc">Travel spot network • Emergency extraction</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-overlay" id="infoOverlay">
+        <div class="info-header">
+            <div class="info-title" id="infoTitle">FACILITY INFO</div>
+            <button class="close-btn" onclick="closeInfo()">CLOSE</button>
+        </div>
+        <div class="info-content">
+            <div class="info-description" id="infoDescription">
+                Select a room to view detailed information.
+            </div>
+            <div class="info-specs" id="infoSpecs"></div>
+        </div>
+    </div>
+
+    <div class="help-modal" id="helpModal">
+        <div class="help-header">
+            <div class="help-title">7TH HOUR HQ GUIDE</div>
+            <div class="help-subtitle">Temporal Facility Navigation & Security</div>
+        </div>
+        <div class="help-content">
+            <div class="legend-section">
+                <h3>SECURITY CLASSIFICATIONS</h3>
+                
+                <div class="legend-item standard">
+                    <div class="legend-color standard"></div>
+                    <div class="legend-text">
+                        <div class="legend-label">STANDARD ACCESS</div>
+                        <div class="legend-desc">General resistance facilities • Basic clearance required</div>
+                    </div>
+                </div>
+                
+                <div class="legend-item high-security">
+                    <div class="legend-color high-security"></div>
+                    <div class="legend-text">
+                        <div class="legend-label">HIGH SECURITY</div>
+                        <div class="legend-desc">Restricted access • Enhanced clearance required</div>
+                    </div>
+                </div>
+                
+                <div class="legend-item special">
+                    <div class="legend-color special"></div>
+                    <div class="legend-text">
+                        <div class="legend-label">SPECIAL ACCESS</div>
+                        <div class="legend-desc">Individual access • Personal quarters • VIP areas</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend-section">
+                <h3>NAVIGATION FEATURES</h3>
+                <ul class="features-list">
+                    <li>Swipe left/right to navigate between facility levels</li>
+                    <li>Tap any room for detailed information and specs</li>
+                    <li>Access times are tracked for each room visit</li>
+                    <li>Security status indicators show operational state</li>
+                    <li>Seven levels: Command, Ops, Quarters, Tech, Medical, Storage, Security</li>
+                    <li>Real-time temporal status updates in header</li>
+                </ul>
+            </div>
+        </div>
+        <button class="help-close" onclick="toggleHelp()">CLOSE GUIDE</button>
+    </div>
+
+    <button class="help-btn" onclick="toggleHelp()">
+        HELP
+    </button>
+
+    <div class="particles" id="particles"></div>
+</div>
+
+<script>
+    const roomData = {
+        'neural-command': {
+            title: 'NEURAL COMMAND CENTER',
+            description: 'The beating heart of the 7th Hour resistance. Multiple neural-linked tactical displays show real-time CHRONOS activities across all TMZs.',
+            specs: {
+                'Security Level': 'ULTRA CLASSIFIED',
+                'Capacity': '12 operators',
+                'Power Usage': '2.7MW continuous',
+                'Quantum Cores': '7 active units',
+                'Neural Links': '24 tactical displays',
+                'Uptime': '99.97%'
             }
-        };
-
-        let currentLevel = 0;
-        let isTransitioning = false;
-
-        // Create particles
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 8 + 's';
-                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
-                container.appendChild(particle);
+        },
+        'lounge': {
+            title: 'COMMON LOUNGE',
+            description: 'Central gathering space featuring the famous black leather sectional sofa and entertainment systems. Where team members build the bonds that keep them fighting.',
+            specs: {
+                'Capacity': '20 people',
+                'Furniture': 'Black leather sectional',
+                'Entertainment': 'Quantum holoscreen',
+                'Climate Control': 'Auto-regulated',
+                'Security Level': 'Standard access',
+                'Daily Usage': '94% occupied'
+            }
+        },
+        'development-lab': {
+            title: 'Y/N & YOONGI DEVELOPMENT LAB',
+            description: 'The secret workshop where Y/N and Yoongi jointly developed portal technology and temporal masking systems. Their combined abilities created revolutionary breakthroughs.',
+            specs: {
+                'Security': 'RESTRICTED - Dual Access',
+                'Portal Prototypes': '73 iterations',
+                'Success Rate': '96.7%',
+                'Energy Efficiency': '340% improved',
+                'Collaboration Hours': '2,847 logged',
+                'Active Projects': '17 ongoing'
+            }
+        },
+        'taehyung-quarters': {
+            title: 'TAEHYUNG\'S QUARTERS',
+            description: 'Personal sanctuary for the former CHRONOS enforcer. Features specialized dampening fields to suppress enforcer programming and meditation space for psychological recovery.',
+            specs: {
+                'Security Level': 'SPECIAL - Individual Access',
+                'Programming Suppression': '97.3% effective',
+                'Neural Dampening': 'Active 24/7',
+                'Recovery Equipment': 'Medical-grade',
+                'Privacy Rating': 'Maximum',
+                'Meditation Space': 'Soundproofed'
+            }
+        },
+        'jungkook-quarters': {
+            title: 'JUNGKOOK\'S QUARTERS',
+            description: 'Adaptive living space designed for the youngest team member. Features mimicry training equipment and ability stabilization systems to help control his temporal powers.',
+            specs: {
+                'Security Level': 'SPECIAL - Individual Access',
+                'Mimicry Training': '7 simulation modes',
+                'Ability Stabilization': 'Auto-adjusting',
+                'Learning Interface': 'Neural-linked',
+                'Safety Protocols': 'Triple redundancy',
+                'Age Adaptations': 'Dynamic furniture'
             }
         }
+    };
 
-        // Level switching with smooth animations
-        function switchLevel(newLevel) {
-            if (isTransitioning || newLevel === currentLevel) return;
+    // Access tracking system
+    let roomAccessTimes = {};
+
+    function updateLastAccess(roomId) {
+        roomAccessTimes[roomId] = Date.now();
+    }
+
+    function getLastAccessTime(roomId) {
+        if (!roomAccessTimes[roomId]) return 'Never accessed';
+        
+        const now = Date.now();
+        const lastAccess = roomAccessTimes[roomId];
+        const timeDiff = Math.floor((now - lastAccess) / (1000 * 60)); // minutes
+        
+        if (timeDiff === 0) return 'Just accessed';
+        if (timeDiff === 1) return '1 minute ago';
+        if (timeDiff < 60) return `${timeDiff} minutes ago`;
+        
+        const hours = Math.floor(timeDiff / 60);
+        if (hours === 1) return '1 hour ago';
+        if (hours < 24) return `${hours} hours ago`;
+        
+        const days = Math.floor(hours / 24);
+        if (days === 1) return '1 day ago';
+        return `${days} days ago`;
+    }
+
+    let currentLevel = 0;
+    let isTransitioning = false;
+
+    // Create temporal particles
+    function createTemporalParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 12 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
+            container.appendChild(particle);
+        }
+    }
+
+    // Level switching
+    function switchLevel(newLevel) {
+        if (isTransitioning || newLevel === currentLevel) return;
+        
+        const newLevelEl = document.getElementById(`level-${newLevel}`);
+        if (!newLevelEl) return;
+        
+        isTransitioning = true;
+        const oldLevel = document.getElementById(`level-${currentLevel}`);
+        
+        // Update tabs
+        document.querySelectorAll('.level-tab').forEach((tab, index) => {
+            tab.classList.toggle('active', index === newLevel);
+        });
+        
+        // Animate transition
+        const direction = newLevel > currentLevel ? 1 : -1;
+        
+        if (oldLevel) {
+            oldLevel.style.transform = `translateX(${-direction * 100}%)`;
+            oldLevel.style.opacity = '0';
+        }
+        
+        setTimeout(() => {
+            if (oldLevel) oldLevel.classList.remove('active');
+            newLevelEl.classList.add('active');
+            newLevelEl.style.transform = `translateX(${direction * 100}%)`;
+            newLevelEl.style.opacity = '0';
             
-            isTransitioning = true;
-            const oldLevel = document.getElementById(`level-${currentLevel}`);
-            const newLevelEl = document.getElementById(`level-${newLevel}`);
-            
-            // Update tabs
-            document.querySelectorAll('.level-tab').forEach((tab, index) => {
-                tab.classList.toggle('active', index === newLevel);
+            requestAnimationFrame(() => {
+                newLevelEl.style.transform = 'translateX(0)';
+                newLevelEl.style.opacity = '1';
             });
             
-            // Animate transition
-            oldLevel.style.transform = newLevel > currentLevel ? 'translateX(-100%)' : 'translateX(100%)';
-            oldLevel.style.opacity = '0';
-            
-            setTimeout(() => {
-                oldLevel.classList.remove('active');
-                newLevelEl.classList.add('active');
-                newLevelEl.style.transform = newLevel > currentLevel ? 'translateX(100%)' : 'translateX(-100%)';
-                newLevelEl.style.opacity = '0';
-                
-                requestAnimationFrame(() => {
-                    newLevelEl.style.transform = 'translateX(0)';
-                    newLevelEl.style.opacity = '1';
-                });
-                
-                currentLevel = newLevel;
-                isTransitioning = false;
-            }, 100);
-        }
+            currentLevel = newLevel;
+            isTransitioning = false;
+        }, 150);
+    }
 
-        // Tab interaction
-        document.querySelectorAll('.level-tab').forEach((tab, index) => {
-            tab.addEventListener('click', () => switchLevel(index));
+    // Tab interaction
+    document.querySelectorAll('.level-tab').forEach((tab, index) => {
+        tab.addEventListener('click', () => switchLevel(index));
+    });
+
+    function showRoomInfo(data, roomId) {
+        const overlay = document.getElementById('infoOverlay');
+        const title = document.getElementById('infoTitle');
+        const description = document.getElementById('infoDescription');
+        const specs = document.getElementById('infoSpecs');
+        
+        title.textContent = data.title;
+        description.textContent = data.description;
+        
+        // Build specs with access tracking
+        specs.innerHTML = '';
+        
+        // Add Last Accessed as first spec
+        const accessSpec = document.createElement('div');
+        accessSpec.className = 'spec-item';
+        accessSpec.innerHTML = `
+            <span class="spec-label">Last Accessed:</span>
+            <span class="spec-value">${getLastAccessTime(roomId)}</span>
+        `;
+        specs.appendChild(accessSpec);
+        
+        // Add regular specs
+        Object.entries(data.specs).forEach(([key, value]) => {
+            const specItem = document.createElement('div');
+            specItem.className = 'spec-item';
+            specItem.innerHTML = `
+                <span class="spec-label">${key}:</span>
+                <span class="spec-value">${value}</span>
+            `;
+            specs.appendChild(specItem);
         });
+        
+        overlay.classList.add('active');
+    }
 
-        // Room interaction with haptic-style feedback
+    function closeInfo() {
+        document.getElementById('infoOverlay').classList.remove('active');
+    }
+
+    function toggleHelp() {
+        const modal = document.getElementById('helpModal');
+        modal.classList.toggle('active');
+    }
+
+    // Room interaction setup
+    function setupRoomInteractions() {
         document.querySelectorAll('.room').forEach(room => {
             room.addEventListener('click', () => {
-                // Visual feedback
                 room.classList.add('tapped');
-                setTimeout(() => room.classList.remove('tapped'), 200);
+                setTimeout(() => room.classList.remove('tapped'), 300);
                 
                 const roomId = room.dataset.room;
+                updateLastAccess(roomId);
+                
                 const data = roomData[roomId];
                 
                 if (data) {
-                    showRoomInfo(data);
+                    showRoomInfo(data, roomId);
                 } else {
-                    // Generic info for rooms without detailed data
+                    const title = room.querySelector('.room-title')?.textContent || 'Unknown Room';
+                    const desc = room.querySelector('.room-desc')?.textContent || 'Facility information';
+                    const isHighSecurity = room.classList.contains('high-security');
+                    const isSpecial = room.classList.contains('special');
+                    
                     showRoomInfo({
-                        title: room.querySelector('.room-title').textContent,
-                        description: room.querySelector('.room-desc').textContent + '. This facility is part of the 7th Hour resistance network operating within the temporal fold.',
+                        title: title,
+                        description: `${desc}. This facility is part of the 7th Hour resistance network operating within the temporal fold.`,
                         specs: {
-                            'Security Level': room.classList.contains('classified') ? 'CLASSIFIED' : 
-                                           room.classList.contains('restricted') ? 'RESTRICTED' : 'STANDARD',
+                            'Security Level': isHighSecurity ? 'HIGH SECURITY' : isSpecial ? 'SPECIAL ACCESS' : 'STANDARD',
                             'Status': 'OPERATIONAL',
                             'Access': 'AUTHORIZED PERSONNEL',
                             'Monitoring': 'ACTIVE'
                         }
-                    });
+                    }, roomId);
                 }
             });
         });
+    }
 
-        function showRoomInfo(data) {
-            const overlay = document.getElementById('infoOverlay');
-            const title = document.getElementById('infoTitle');
-            const description = document.getElementById('infoDescription');
-            const specs = document.getElementById('infoSpecs');
-            
-            title.textContent = data.title;
-            description.textContent = data.description;
-            
-            // Build specs
-            specs.innerHTML = '';
-            Object.entries(data.specs).forEach(([key, value]) => {
-                const specItem = document.createElement('div');
-                specItem.className = 'spec-item';
-                specItem.innerHTML = `
-                    <span class="spec-label">${key}:</span>
-                    <span class="spec-value">${value}</span>
-                `;
-                specs.appendChild(specItem);
-            });
-            
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+    // Swipe gestures
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-        function closeInfo() {
-            document.getElementById('infoOverlay').classList.remove('active');
-            document.body.style.overflow = 'hidden';
-        }
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
 
-        function emergencyProtocol() {
-            if (confirm('⚠️ EMERGENCY LOCKDOWN\n\nThis will secure all systems and suspend portal operations.\n\nContinue?')) {
-                // Emergency visual effects
-                document.body.style.background = 'linear-gradient(135deg, #330000 0%, #660000 50%, #990000 100%)';
-                document.querySelectorAll('.room-status').forEach(status => {
-                    status.style.background = '#ff0000';
-                    status.style.animation = 'pulse 0.3s infinite';
-                });
-                
-                // Emergency alert overlay
-                const alertDiv = document.createElement('div');
-                alertDiv.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background: rgba(255, 0, 0, 0.95);
-                    color: white;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    text-align: center;
-                    z-index: 2000;
-                    font-family: 'Courier New', monospace;
-                `;
-                alertDiv.innerHTML = `
-                    <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; animation: blink 0.5s infinite;">
-                        ⚠️ EMERGENCY LOCKDOWN ⚠️
-                    </div>
-                    <div style="font-size: 16px; margin-bottom: 10px;">
-                        ALL SYSTEMS SECURED
-                    </div>
-                    <div style="font-size: 14px; margin-bottom: 30px;">
-                        Portal network offline • Reality anchors active<br>
-                        Facility in protective mode
-                    </div>
-                    <button onclick="location.reload();" style="
-                        padding: 15px 30px;
-                        background: #fff;
-                        color: #000;
-                        border: none;
-                        border-radius: 5px;
-                        font-size: 16px;
-                        font-weight: bold;
-                        cursor: pointer;
-                        font-family: inherit;
-                    ">ACKNOWLEDGE & RESET</button>
-                `;
-                
-                // Add blink animation
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes blink {
-                        0%, 50% { opacity: 1; }
-                        51%, 100% { opacity: 0.3; }
-                    }
-                `;
-                document.head.appendChild(style);
-                document.body.appendChild(alertDiv);
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const deltaX = touchEndX - touchStartX;
+        const minSwipeDistance = 60;
+        
+        if (Math.abs(deltaX) > minSwipeDistance) {
+            if (deltaX > 0 && currentLevel > 0) {
+                switchLevel(currentLevel - 1);
+            } else if (deltaX < 0 && currentLevel < 6) {
+                switchLevel(currentLevel + 1);
             }
         }
+    }, { passive: true });
 
-        // Swipe gestures for level switching
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            if (document.getElementById('infoOverlay').classList.contains('active')) return;
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+    // Update status
+    function updateTemporalStatus() {
+        const status = document.querySelector('.header .status');
+        if (!status) return;
+        
+        const time = new Date().toLocaleTimeString('en-US', { 
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit'
         });
+        status.textContent = `TEMPORAL FOLD • SECURITY: ULTRA • ${time}`;
+    }
 
-        document.addEventListener('touchend', (e) => {
-            if (document.getElementById('infoOverlay').classList.contains('active')) return;
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe();
-        });
+    // Initialize
+    function init() {
+        createTemporalParticles();
+        updateTemporalStatus();
+        setInterval(updateTemporalStatus, 1000);
+        
+        // Setup room interactions after short delay
+        setTimeout(setupRoomInteractions, 100);
+    }
 
-        function handleSwipe() {
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            const minSwipeDistance = 50;
-            
-            // Only process horizontal swipes
-            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-                if (deltaX > 0 && currentLevel > 0) {
-                    // Swipe right - previous level
-                    switchLevel(currentLevel - 1);
-                } else if (deltaX < 0 && currentLevel < 6) {
-                    // Swipe left - next level
-                    switchLevel(currentLevel + 1);
-                }
-            }
-        }
-
-        // Close info overlay on swipe down
-        let infoTouchStartY = 0;
-        document.getElementById('infoOverlay').addEventListener('touchstart', (e) => {
-            infoTouchStartY = e.changedTouches[0].screenY;
-        });
-
-        document.getElementById('infoOverlay').addEventListener('touchend', (e) => {
-            const deltaY = e.changedTouches[0].screenY - infoTouchStartY;
-            if (deltaY > 100) { // Swipe down
-                closeInfo();
-            }
-        });
-
-        // Prevent bounce/rubber band effect
-        document.addEventListener('touchmove', (e) => {
-            if (document.getElementById('infoOverlay').classList.contains('active')) return;
+    // Prevent zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
             e.preventDefault();
-        }, { passive: false });
-
-        // Auto-scroll level tabs
-        function scrollTabIntoView(index) {
-            const tabsContainer = document.getElementById('levelTabs');
-            const tab = document.querySelectorAll('.level-tab')[index];
-            const containerWidth = tabsContainer.offsetWidth;
-            const tabLeft = tab.offsetLeft;
-            const tabWidth = tab.offsetWidth;
-            
-            const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
-            tabsContainer.scrollTo({
-                left: scrollLeft,
-                behavior: 'smooth'
-            });
         }
+        lastTouchEnd = now;
+    }, false);
 
-        // Update status with time
-        function updateStatus() {
-            const status = document.querySelector('.header .status');
-            const time = new Date().toLocaleTimeString('en-US', { 
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            status.textContent = `TEMPORAL FOLD • SECURITY: ULTRA • ${time}`;
-        }
+    init();
 
-        // Random system activity
-        function simulateActivity() {
-            const rooms = document.querySelectorAll('.room-status');
-            const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
-            
-            randomRoom.style.animation = 'none';
-            randomRoom.style.background = '#ffff00';
-            
-            setTimeout(() => {
-                randomRoom.style.animation = 'pulse 2s infinite';
-                randomRoom.style.background = '';
-            }, 1000);
-        }
+    console.log('🌌 7th Hour Temporal HQ Online');
+    console.log('📱 All levels operational');
+    console.log('💫 Help guide available');
+</script>
+```
 
-        // Initialize everything
-        createParticles();
-        updateStatus();
-        setInterval(updateStatus, 1000);
-        setInterval(simulateActivity, 8000);
-
-        // Prevent zoom on double tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-
-        // Prevent context menu
-        document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // Performance optimization - pause animations when not visible
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                document.querySelectorAll('.particle').forEach(p => {
-                    p.style.animationPlayState = 'paused';
-                });
-            } else {
-                document.querySelectorAll('.particle').forEach(p => {
-                    p.style.animationPlayState = 'running';
-                });
-            }
-        });
-
-        console.log('📱 7th Hour Mobile HQ Online');
-        console.log('⚡ Temporal Fold Facility Ready');
-        console.log('👆 Swipe left/right to navigate levels');
-    </script>
 </body>
 </html>
